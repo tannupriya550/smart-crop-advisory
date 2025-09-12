@@ -1,0 +1,91 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(50, 20%, 98%);
+  --foreground: hsl(25, 15%, 15%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(25, 15%, 15%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(25, 15%, 15%);
+  --primary: hsl(120, 40%, 35%);
+  --primary-foreground: hsl(0, 0%, 98%);
+  --secondary: hsl(30, 25%, 70%);
+  --secondary-foreground: hsl(25, 15%, 15%);
+  --muted: hsl(120, 20%, 92%);
+  --muted-foreground: hsl(25, 10%, 45%);
+  --accent: hsl(25, 95%, 55%);
+  --accent-foreground: hsl(0, 0%, 98%);
+  --destructive: hsl(0, 85%, 60%);
+  --destructive-foreground: hsl(0, 0%, 98%);
+  --border: hsl(120, 15%, 85%);
+  --input: hsl(120, 15%, 85%);
+  --ring: hsl(120, 40%, 35%);
+  --chart-1: hsl(120, 40%, 45%);
+  --chart-2: hsl(60, 80%, 50%);
+  --chart-3: hsl(30, 70%, 55%);
+  --chart-4: hsl(200, 60%, 50%);
+  --chart-5: hsl(280, 50%, 60%);
+  --sidebar: hsl(0, 0%, 100%);
+  --sidebar-foreground: hsl(25, 15%, 15%);
+  --sidebar-primary: hsl(120, 40%, 35%);
+  --sidebar-primary-foreground: hsl(0, 0%, 98%);
+  --sidebar-accent: hsl(120, 20%, 92%);
+  --sidebar-accent-foreground: hsl(120, 40%, 35%);
+  --sidebar-border: hsl(120, 15%, 85%);
+  --sidebar-ring: hsl(120, 40%, 35%);
+  --font-sans: 'Roboto', system-ui, sans-serif;
+  --font-serif: Georgia, serif;
+  --font-mono: Menlo, monospace;
+  --radius: 8px;
+}
+
+.dark {
+  --background: hsl(25, 20%, 8%);
+  --foreground: hsl(50, 20%, 90%);
+  --card: hsl(25, 15%, 12%);
+  --card-foreground: hsl(50, 20%, 90%);
+  --popover: hsl(25, 15%, 12%);
+  --popover-foreground: hsl(50, 20%, 90%);
+  --primary: hsl(120, 35%, 45%);
+  --primary-foreground: hsl(0, 0%, 98%);
+  --secondary: hsl(30, 15%, 25%);
+  --secondary-foreground: hsl(50, 20%, 90%);
+  --muted: hsl(25, 15%, 18%);
+  --muted-foreground: hsl(50, 10%, 60%);
+  --accent: hsl(25, 85%, 60%);
+  --accent-foreground: hsl(0, 0%, 98%);
+  --destructive: hsl(0, 85%, 60%);
+  --destructive-foreground: hsl(0, 0%, 98%);
+  --border: hsl(25, 15%, 25%);
+  --input: hsl(25, 15%, 25%);
+  --ring: hsl(120, 35%, 45%);
+  --sidebar: hsl(25, 15%, 12%);
+  --sidebar-foreground: hsl(50, 20%, 90%);
+  --sidebar-primary: hsl(120, 35%, 45%);
+  --sidebar-primary-foreground: hsl(0, 0%, 98%);
+  --sidebar-accent: hsl(25, 15%, 18%);
+  --sidebar-accent-foreground: hsl(120, 35%, 45%);
+  --sidebar-border: hsl(25, 15%, 25%);
+  --sidebar-ring: hsl(120, 35%, 45%);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+  }
+}
+
+.chat-bubble-user {
+  background: linear-gradient(135deg, var(--primary), hsl(120, 35%, 40%));
+}
+
+.chat-bubble-bot {
+  background: linear-gradient(135deg, var(--muted), var(--card));
+  border: 1px solid var(--border);
+}
