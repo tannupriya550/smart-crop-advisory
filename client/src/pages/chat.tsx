@@ -8,7 +8,8 @@ import { useLanguage } from '@/hooks/use-language';
 import { useLocalStorage } from '@/hooks/use-local-storage';
 import { useToast } from '@/hooks/use-toast';
 import { FarmProfile } from '@shared/schema';
-import { Send, Mic, Paperclip, Bot, User, Loader2 } from 'lucide-react';
+import { voiceService } from '@/lib/voice-service';
+import { Send, Mic, MicOff, Paperclip, Bot, User, Loader2, Volume2, VolumeX } from 'lucide-react';
 
 interface LocalChatMessage {
   id: string;
@@ -26,6 +27,9 @@ export default function Chat() {
   const [message, setMessage] = useState('');
   const [isRecording, setIsRecording] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [recognitionSupported, setRecognitionSupported] = useState(false);
+  const [synthesisSupported, setSynthesisSupported] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -36,6 +40,13 @@ export default function Chat() {
   useEffect(() => {
     scrollToBottom();
   }, [chatHistory]);
+
+  // Check voice support on component mount
+  useEffect(() => {
+    const compatibility = voiceService.getCompatibilityInfo();
+    setRecognitionSupported(compatibility.speechRecognition);
+    setSynthesisSupported(compatibility.speechSynthesis);
+  }, []);
 
   const sendMessageToAI = async (messageText: string): Promise<string> => {
     if (!farmProfile) {
@@ -125,12 +136,90 @@ export default function Chat() {
     }
   };
 
-  const handleVoiceInput = () => {
-    setIsRecording(!isRecording);
-    toast({
-      title: "Voice Input",
-      description: "Voice input feature is coming soon!",
-    });
+  const handleVoiceInput = async () => {
+    if (!recognitionSupported) {
+      toast({
+        title: "Voice Not Supported",
+        description: "Your browser doesn't support voice recognition",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (isRecording) {
+      // Stop recording
+      voiceService.stopListening();
+      setIsRecording(false);
+      return;
+    }
+
+    // Start recording
+    try {
+      setIsRecording(true);
+      
+      await voiceService.startListening(
+        (result) => {
+          // Update message with interim results
+          if (result.isFinal) {
+            setMessage(result.transcript);
+            setIsRecording(false);
+          } else {
+            // Show interim results in input
+            setMessage(result.transcript);
+          }
+        },
+        (error) => {
+          setIsRecording(false);
+          toast({
+            title: "Voice Recognition Error",
+            description: error,
+            variant: "destructive"
+          });
+        },
+        () => {
+          setIsRecording(false);
+        },
+        {
+          language: language,
+          continuous: false,
+          interimResults: true
+        }
+      );
+    } catch (error) {
+      setIsRecording(false);
+      toast({
+        title: "Voice Recognition Failed",
+        description: "Could not start voice recognition",
+        variant: "destructive"
+      });
+    }
+  };
+
+  const handleSpeakMessage = async (text: string) => {
+    if (!synthesisSupported) return;
+
+    if (isSpeaking) {
+      voiceService.stopSpeaking();
+      setIsSpeaking(false);
+      return;
+    }
+
+    try {
+      setIsSpeaking(true);
+      await voiceService.speak(text, language, {
+        rate: 0.9,
+        pitch: 1,
+        volume: 0.8
+      });
+      setIsSpeaking(false);
+    } catch (error) {
+      setIsSpeaking(false);
+      toast({
+        title: "Speech Failed",
+        description: "Could not speak the message",
+        variant: "destructive"
+      });
+    }
   };
 
   const formatTime = (date: Date) => {
@@ -228,9 +317,26 @@ export default function Chat() {
                     </div>
                     <div className="chat-bubble-bot max-w-xs lg:max-w-md px-4 py-3 rounded-lg">
                       <div className="text-sm whitespace-pre-wrap">{chat.response}</div>
-                      <span className="text-xs text-muted-foreground mt-1 block">
-                        {formatTime(chat.createdAt)}
-                      </span>
+                      <div className="flex items-center justify-between mt-2">
+                        <span className="text-xs text-muted-foreground">
+                          {formatTime(chat.createdAt)}
+                        </span>
+                        {synthesisSupported && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-6 w-6 p-0"
+                            onClick={() => handleSpeakMessage(chat.response)}
+                            data-testid={`button-speak-${index}`}
+                          >
+                            {isSpeaking ? (
+                              <VolumeX className="h-3 w-3" />
+                            ) : (
+                              <Volume2 className="h-3 w-3" />
+                            )}
+                          </Button>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -321,12 +427,24 @@ export default function Chat() {
                   type="button"
                   variant="ghost"
                   size="sm"
-                  className="text-muted-foreground hover:text-foreground"
+                  className={`${recognitionSupported ? 'text-muted-foreground hover:text-foreground' : 'text-muted-foreground/50 cursor-not-allowed'}`}
                   onClick={handleVoiceInput}
+                  disabled={!recognitionSupported || isLoading}
                   data-testid="button-voice-input"
                 >
-                  <Mic className={`h-4 w-4 mr-2 ${isRecording ? 'text-destructive animate-pulse' : ''}`} />
-                  <span>{t('voiceInput')}</span>
+                  {isRecording ? (
+                    <MicOff className="h-4 w-4 mr-2 text-destructive animate-pulse" />
+                  ) : (
+                    <Mic className="h-4 w-4 mr-2" />
+                  )}
+                  <span>
+                    {isRecording 
+                      ? (language === 'hi' ? 'रुकें' : 'Stop Recording')
+                      : !recognitionSupported 
+                        ? (language === 'hi' ? 'आवाज़ समर्थित नहीं' : 'Voice Not Supported')
+                        : t('voiceInput')
+                    }
+                  </span>
                 </Button>
               </div>
             </form>
