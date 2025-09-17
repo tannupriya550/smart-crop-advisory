@@ -59,3 +59,24 @@ export type InsertCropRecommendation = z.infer<typeof insertCropRecommendationSc
 export type CropRecommendation = typeof cropRecommendations.$inferSelect;
 export type InsertChatMessage = z.infer<typeof insertChatMessageSchema>;
 export type ChatMessage = typeof chatMessages.$inferSelect;
+
+// Detection Results Schema
+export const detectionResults = pgTable("detection_results", {
+  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
+  profileId: varchar("profile_id").references(() => farmProfiles.id),
+  detectedClass: text("detected_class").notNull(),
+  confidence: real("confidence").notNull(),
+  alternatives: jsonb("alternatives").$type<Array<{class: string, confidence: number}>>().default([]),
+  matchedPestId: text("matched_pest_id"), // references pest from pestDatabase
+  imageUrl: text("image_url"), // optional - for storing processed image
+  notes: jsonb("notes").$type<string[]>().default([]), // treatment tips, recommendations
+  createdAt: timestamp("created_at").defaultNow()
+});
+
+export const insertDetectionResultSchema = createInsertSchema(detectionResults).omit({
+  id: true,
+  createdAt: true
+});
+
+export type InsertDetectionResult = z.infer<typeof insertDetectionResultSchema>;
+export type DetectionResult = typeof detectionResults.$inferSelect;
