@@ -322,7 +322,7 @@ export default function PestGallery() {
                           </Button>
                         </DialogTrigger>
                         
-                        {selectedPest?.id === detectionResult.matchedPest.id && (
+                        {selectedPest && selectedPest.id === detectionResult.matchedPest.id && (
                           <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
                             <DialogHeader>
                               <DialogTitle className="flex items-center gap-2" data-testid="text-detected-dialog-title">
