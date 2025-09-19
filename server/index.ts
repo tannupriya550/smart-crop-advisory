@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
+import fetch from "node-fetch"; // install with: npm install node-fetch
 
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
@@ -86,17 +87,52 @@ app.use((req, res, next) => {
       log(`Error: ${message}`);
     });
 
+    // --- Health check route ---
+    app.get("/health", (_req, res) => {
+      res.json({ status: "ok" });
+    });
+
+    // --- Debug route: check if WEATHER_API_KEY is loaded ---
+    app.get("/api/check-env", (_req, res) => {
+      const hasKey = !!process.env.WEATHER_API_KEY;
+      res.json({
+        WEATHER_API_KEY: hasKey ? "✅ Loaded" : "❌ Missing",
+      });
+    });
+
+    // --- Weather route ---
+    app.get("/api/weather", async (req, res) => {
+      try {
+        const city = (req.query.city as string) || "Delhi";
+        const apiKey = process.env.WEATHER_API_KEY;
+
+        if (!apiKey) {
+          return res
+            .status(500)
+            .json({ error: "Weather API key not configured" });
+        }
+
+        const response = await fetch(
+          `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`
+        );
+
+        if (!response.ok) {
+          throw new Error(`Weather API failed: ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        res.json(data);
+      } catch (err: any) {
+        res.status(500).json({ error: err.message });
+      }
+    });
+
     // --- Setup Vite or serve static ---
     if (process.env.NODE_ENV === "development") {
       await setupVite(app, server);
     } else {
       serveStatic(app);
     }
-
-    // --- Health check route ---
-    app.get("/health", (_req, res) => {
-      res.json({ status: "ok" });
-    });
 
     // --- Catch-all route for React Router (important for Render) ---
     app.get("*", (_req, res) => {
