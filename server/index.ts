@@ -1,8 +1,7 @@
 import express, { type Request, Response, NextFunction } from "express";
 import dotenv from "dotenv";
-import path from "path";
+import path, { dirname } from "path";
 import { fileURLToPath } from "url";
-import { dirname } from "path";
 
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
@@ -99,7 +98,7 @@ app.use((req, res, next) => {
       });
     });
 
-    // --- Weather route ---
+    // --- Current Weather route ---
     app.get("/api/weather", async (req, res) => {
       try {
         const city = (req.query.city as string) || "Delhi";
@@ -111,7 +110,6 @@ app.use((req, res, next) => {
             .json({ error: "Weather API key not configured" });
         }
 
-        // Use built-in fetch (no node-fetch needed in Node 18+ / Render)
         const response = await fetch(
           `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`
         );
@@ -130,6 +128,36 @@ app.use((req, res, next) => {
       }
     });
 
+    // --- Forecast route (Free 5-day / 3-hour API) ---
+    app.get("/api/forecast", async (req, res) => {
+      try {
+        const city = (req.query.city as string) || "Delhi";
+        const apiKey = process.env.WEATHER_API_KEY;
+
+        if (!apiKey) {
+          return res
+            .status(500)
+            .json({ error: "Weather API key not configured" });
+        }
+
+        const response = await fetch(
+          `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`
+        );
+
+        if (!response.ok) {
+          const error = await response.json();
+          return res
+            .status(response.status)
+            .json({ error: "Forecast API failed", details: error });
+        }
+
+        const data = await response.json();
+        res.json(data);
+      } catch (err: any) {
+        res.status(500).json({ error: err.message });
+      }
+    });
+
     // --- Setup Vite or serve static ---
     if (process.env.NODE_ENV === "development") {
       await setupVite(app, server);
@@ -139,7 +167,7 @@ app.use((req, res, next) => {
 
     // --- Catch-all route for React Router (important for Render) ---
     app.get("*", (_req, res) => {
-      res.sendFile(path.resolve(__dirname, "public/index.html"));
+      res.sendFile(path.resolve(__dirname, "../dist/public/index.html"));
     });
 
     // --- Start server ---
