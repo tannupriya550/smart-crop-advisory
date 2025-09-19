@@ -3,7 +3,6 @@ import dotenv from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
-import fetch from "node-fetch"; // install with: npm install node-fetch
 
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
@@ -112,12 +111,16 @@ app.use((req, res, next) => {
             .json({ error: "Weather API key not configured" });
         }
 
+        // Use built-in fetch (no node-fetch needed in Node 18+ / Render)
         const response = await fetch(
           `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`
         );
 
         if (!response.ok) {
-          throw new Error(`Weather API failed: ${response.statusText}`);
+          const error = await response.json();
+          return res
+            .status(response.status)
+            .json({ error: "Weather API failed", details: error });
         }
 
         const data = await response.json();
