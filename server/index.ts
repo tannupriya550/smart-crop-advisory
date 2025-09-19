@@ -1,8 +1,44 @@
+import dotenv from "dotenv";
+dotenv.config();
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import helmet from "helmet";
 
 const app = express();
+
+// --- Hide Express + scrub headers ---
+app.disable("x-powered-by");
+app.use((req, res, next) => {
+  res.removeHeader("X-Powered-By");
+  res.removeHeader("Server");
+  res.removeHeader("Via");
+  res.removeHeader("X-Served-By");
+  res.removeHeader("X-Forwarded-Host");
+  res.removeHeader("X-Forwarded-Server");
+
+  // Optional: set your own "Server" header
+  // res.setHeader("Server", "SmartCropAdvisory/1.0");
+
+  next();
+});
+
+// --- Secure headers via helmet ---
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      useDefaults: true,
+      directives: {
+        // Allow inline scripts/styles for React/Vite dev
+        "script-src": ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+        "style-src": ["'self'", "'unsafe-inline'"],
+        "img-src": ["'self'", "data:", "https:"],
+      },
+    },
+    crossOriginEmbedderPolicy: false, // needed for React/Vite dev compatibility
+  })
+);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
@@ -25,8 +61,8 @@ app.use((req, res, next) => {
       if (capturedJsonResponse) {
         logLine += ` :: ${JSON.stringify(capturedJsonResponse)}`;
       }
-      if (logLine.length > 80) {
-        logLine = logLine.slice(0, 79) + "…";
+      if (logLine.length > 120) {
+        logLine = logLine.slice(0, 119) + "…";
       }
       log(logLine);
     }
@@ -55,11 +91,10 @@ app.use((req, res, next) => {
       serveStatic(app);
     }
 
-    // --- Start server (Windows-friendly) ---
+    // --- Start server ---
     const port = parseInt(process.env.PORT || "5000", 10);
-    const host = process.env.HOST || "127.0.0.1"; // localhost on Windows
-    server.listen(port, host, () => {
-      log(`Server running on http://${host}:${port}`);
+    server.listen(port, () => {
+      log(`Server running on port ${port}`);
     });
   } catch (err) {
     log("Failed to start server:");
@@ -67,8 +102,18 @@ app.use((req, res, next) => {
     process.exit(1);
   }
 })();
-app.get("/test", (req, res) => {
-  res.send("Backend is working 🚀");
-});
 
+// --- Health check route ---
+app.get("/health", (_req, res) => {
+  res.json({ status: "ok" });
+});
+// --- Debug route to check env vars (remove later in prod!) ---
+app.get("/env-check", (_req, res) => {
+  res.json({
+    PORT: process.env.PORT,
+    DATABASE_URL: process.env.DATABASE_URL ? "✔️ Loaded" : "❌ Not found",
+    SESSION_SECRET: process.env.SESSION_SECRET ? "✔️ Loaded" : "❌ Not found",
+    OPENAI_API_KEY: process.env.OPENAI_API_KEY ? "✔️ Loaded" : "❌ Not found",
+  });
+});
 
