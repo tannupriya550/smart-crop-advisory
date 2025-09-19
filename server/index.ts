@@ -1,44 +1,46 @@
-import dotenv from "dotenv";
-dotenv.config();
 import express, { type Request, Response, NextFunction } from "express";
+import dotenv from "dotenv";
+import path from "path";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import helmet from "helmet";
 
+// Load env vars
+dotenv.config();
+
 const app = express();
 
-// --- Hide Express + scrub headers ---
+// Needed for __dirname in ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// --- Hide Express signature ---
 app.disable("x-powered-by");
 app.use((req, res, next) => {
   res.removeHeader("X-Powered-By");
   res.removeHeader("Server");
-  res.removeHeader("Via");
-  res.removeHeader("X-Served-By");
-  res.removeHeader("X-Forwarded-Host");
-  res.removeHeader("X-Forwarded-Server");
-
-  // Optional: set your own "Server" header
-  // res.setHeader("Server", "SmartCropAdvisory/1.0");
-
   next();
 });
 
-// --- Secure headers via helmet ---
+// --- Security headers via Helmet ---
 app.use(
   helmet({
     contentSecurityPolicy: {
       useDefaults: true,
       directives: {
-        // Allow inline scripts/styles for React/Vite dev
         "script-src": ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
         "style-src": ["'self'", "'unsafe-inline'"],
         "img-src": ["'self'", "data:", "https:"],
       },
     },
-    crossOriginEmbedderPolicy: false, // needed for React/Vite dev compatibility
+    crossOriginEmbedderPolicy: false,
   })
 );
 
+// --- Body parsing ---
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
@@ -84,12 +86,22 @@ app.use((req, res, next) => {
       log(`Error: ${message}`);
     });
 
-    // --- Setup Vite or serve static files ---
+    // --- Setup Vite or serve static ---
     if (process.env.NODE_ENV === "development") {
       await setupVite(app, server);
     } else {
       serveStatic(app);
     }
+
+    // --- Health check route ---
+    app.get("/health", (_req, res) => {
+      res.json({ status: "ok" });
+    });
+
+    // --- Catch-all route for React Router (important for Render) ---
+    app.get("*", (_req, res) => {
+      res.sendFile(path.resolve(__dirname, "../dist/public/index.html"));
+    });
 
     // --- Start server ---
     const port = parseInt(process.env.PORT || "5000", 10);
@@ -102,18 +114,3 @@ app.use((req, res, next) => {
     process.exit(1);
   }
 })();
-
-// --- Health check route ---
-app.get("/health", (_req, res) => {
-  res.json({ status: "ok" });
-});
-// --- Debug route to check env vars (remove later in prod!) ---
-app.get("/env-check", (_req, res) => {
-  res.json({
-    PORT: process.env.PORT,
-    DATABASE_URL: process.env.DATABASE_URL ? "✔️ Loaded" : "❌ Not found",
-    SESSION_SECRET: process.env.SESSION_SECRET ? "✔️ Loaded" : "❌ Not found",
-    OPENAI_API_KEY: process.env.OPENAI_API_KEY ? "✔️ Loaded" : "❌ Not found",
-  });
-});
-
