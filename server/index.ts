@@ -139,7 +139,7 @@ app.use((req, res, next) => {
 
     // --- Catch-all route for React Router (important for Render) ---
     app.get("*", (_req, res) => {
-      res.sendFile(path.resolve(__dirname, "../dist/public/index.html"));
+      res.sendFile(path.resolve(__dirname, "public/index.html"));
     });
 
     // --- Start server ---
