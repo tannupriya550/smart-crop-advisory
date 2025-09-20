@@ -24,6 +24,7 @@ export function WeatherWidget() {
   const [loading, setLoading] = useState(false);
   const [current, setCurrent] = useState<any>(null);
   const [forecast, setForecast] = useState<ForecastDay[]>([]);
+  const [showForecast, setShowForecast] = useState(false); // 👈 toggle state
 
   // Helper: group 3-hour forecast into daily min/max
   const groupForecastByDay = (forecastList: any[]): ForecastDay[] => {
@@ -150,24 +151,38 @@ export function WeatherWidget() {
             <h4 className="font-medium mb-2 flex items-center gap-2">
               <Calendar className="h-4 w-4" /> 7-Day Forecast
             </h4>
-            <div className="grid gap-2">
-              {forecast.map((day) => (
-                <div
-                  key={day.date}
-                  className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-800/50 rounded"
-                >
-                  <div>
-                    <div className="font-medium">{day.date}</div>
-                    <div className="text-xs text-muted-foreground">
-                      {day.description}
+
+            {/* Toggle Button */}
+            <Button
+              variant="outline"
+              size="sm"
+              className="mb-2"
+              onClick={() => setShowForecast(!showForecast)}
+            >
+              {showForecast ? "Hide Forecast" : "Show Forecast"}
+            </Button>
+
+            {/* Forecast List (only when expanded) */}
+            {showForecast && (
+              <div className="grid gap-2">
+                {forecast.map((day) => (
+                  <div
+                    key={day.date}
+                    className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-800/50 rounded"
+                  >
+                    <div>
+                      <div className="font-medium">{day.date}</div>
+                      <div className="text-xs text-muted-foreground">
+                        {day.description}
+                      </div>
+                    </div>
+                    <div className="text-sm font-medium">
+                      {day.temperatureMax}° / {day.temperatureMin}°
                     </div>
                   </div>
-                  <div className="text-sm font-medium">
-                    {day.temperatureMax}° / {day.temperatureMin}°
-                  </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 
