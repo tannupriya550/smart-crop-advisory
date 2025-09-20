@@ -2,119 +2,109 @@
 @tailwind components;
 @tailwind utilities;
 
-/* === Vibrant Theme Variables === */
 :root {
-  --background: hsl(210, 100%, 98%);
-  --foreground: hsl(220, 25%, 15%);
-
+  /* Background: subtle gradient with earthy tones */
+  --background: linear-gradient(135deg, hsl(120, 45%, 92%), hsl(60, 80%, 95%));
+  --foreground: hsl(25, 20%, 20%);
+  
   --card: hsl(0, 0%, 100%);
-  --card-foreground: hsl(220, 25%, 15%);
-
+  --card-foreground: hsl(25, 20%, 20%);
+  
   --popover: hsl(0, 0%, 100%);
-  --popover-foreground: hsl(220, 25%, 15%);
-
-  --primary: hsl(220, 85%, 55%); /* Vibrant Blue */
+  --popover-foreground: hsl(25, 20%, 20%);
+  
+  /* Primary: fresh green */
+  --primary: hsl(120, 50%, 35%);
   --primary-foreground: hsl(0, 0%, 98%);
-
-  --secondary: hsl(280, 75%, 60%); /* Purple secondary */
-  --secondary-foreground: hsl(0, 0%, 100%);
-
-  --muted: hsl(210, 40%, 96%);
-  --muted-foreground: hsl(220, 10%, 40%);
-
-  --accent: hsl(35, 95%, 55%); /* Warm orange */
-  --accent-foreground: hsl(0, 0%, 100%);
-
-  --destructive: hsl(0, 80%, 60%);
+  
+  /* Secondary: soft beige */
+  --secondary: hsl(45, 35%, 80%);
+  --secondary-foreground: hsl(25, 20%, 20%);
+  
+  /* Muted tones */
+  --muted: hsl(120, 30%, 90%);
+  --muted-foreground: hsl(25, 15%, 40%);
+  
+  /* Accent: vibrant orange for farming energy */
+  --accent: hsl(30, 85%, 55%);
+  --accent-foreground: hsl(0, 0%, 98%);
+  
+  --destructive: hsl(0, 75%, 55%);
   --destructive-foreground: hsl(0, 0%, 98%);
+  
+  --border: hsl(120, 20%, 80%);
+  --input: hsl(120, 20%, 80%);
+  --ring: hsl(120, 50%, 35%);
 
-  --border: hsl(220, 15%, 85%);
-  --input: hsl(220, 15%, 85%);
-  --ring: hsl(220, 85%, 55%);
-
-  --chart-1: hsl(220, 70%, 50%);
-  --chart-2: hsl(160, 70%, 45%);
-  --chart-3: hsl(45, 95%, 55%);
-  --chart-4: hsl(300, 65%, 60%);
-  --chart-5: hsl(10, 80%, 60%);
-
+  /* Charts: agri-friendly palette */
+  --chart-1: hsl(120, 50%, 40%);  /* green */
+  --chart-2: hsl(45, 80%, 55%);   /* yellow */
+  --chart-3: hsl(30, 70%, 55%);   /* orange */
+  --chart-4: hsl(200, 60%, 50%);  /* sky blue */
+  --chart-5: hsl(280, 50%, 60%);  /* purple */
+  
   --sidebar: hsl(0, 0%, 100%);
-  --sidebar-foreground: hsl(220, 25%, 15%);
-  --sidebar-primary: hsl(220, 85%, 55%);
+  --sidebar-foreground: hsl(25, 20%, 20%);
+  --sidebar-primary: hsl(120, 50%, 35%);
   --sidebar-primary-foreground: hsl(0, 0%, 98%);
-  --sidebar-accent: hsl(220, 40%, 95%);
-  --sidebar-accent-foreground: hsl(220, 85%, 55%);
-  --sidebar-border: hsl(220, 15%, 85%);
-  --sidebar-ring: hsl(220, 85%, 55%);
-
-  --font-sans: 'Inter', system-ui, sans-serif;
-  --font-serif: Georgia, serif;
-  --font-mono: Menlo, monospace;
-
+  --sidebar-accent: hsl(120, 30%, 90%);
+  --sidebar-accent-foreground: hsl(120, 50%, 35%);
+  --sidebar-border: hsl(120, 20%, 80%);
+  --sidebar-ring: hsl(120, 50%, 35%);
+  
+  --font-sans: 'Roboto', system-ui, sans-serif;
   --radius: 10px;
 }
 
 .dark {
-  --background: hsl(220, 20%, 10%);
-  --foreground: hsl(220, 20%, 90%);
-
-  --card: hsl(220, 25%, 15%);
-  --card-foreground: hsl(220, 20%, 90%);
-
-  --popover: hsl(220, 25%, 15%);
-  --popover-foreground: hsl(220, 20%, 90%);
-
-  --primary: hsl(220, 85%, 65%);
+  --background: linear-gradient(135deg, hsl(120, 25%, 10%), hsl(60, 20%, 15%));
+  --foreground: hsl(50, 20%, 90%);
+  --card: hsl(25, 15%, 12%);
+  --card-foreground: hsl(50, 20%, 90%);
+  --popover: hsl(25, 15%, 12%);
+  --popover-foreground: hsl(50, 20%, 90%);
+  
+  --primary: hsl(120, 45%, 45%);
   --primary-foreground: hsl(0, 0%, 98%);
-
-  --secondary: hsl(280, 75%, 65%);
-  --secondary-foreground: hsl(0, 0%, 100%);
-
-  --muted: hsl(220, 20%, 20%);
-  --muted-foreground: hsl(220, 10%, 65%);
-
-  --accent: hsl(35, 95%, 60%);
-  --accent-foreground: hsl(0, 0%, 100%);
-
-  --destructive: hsl(0, 80%, 65%);
-  --destructive-foreground: hsl(0, 0%, 98%);
-
-  --border: hsl(220, 15%, 25%);
-  --input: hsl(220, 15%, 25%);
-  --ring: hsl(220, 85%, 65%);
-
-  --sidebar: hsl(220, 25%, 15%);
-  --sidebar-foreground: hsl(220, 20%, 90%);
-  --sidebar-primary: hsl(220, 85%, 65%);
+  
+  --secondary: hsl(45, 25%, 25%);
+  --secondary-foreground: hsl(50, 20%, 90%);
+  
+  --muted: hsl(120, 20%, 18%);
+  --muted-foreground: hsl(50, 10%, 65%);
+  
+  --accent: hsl(30, 80%, 55%);
+  --accent-foreground: hsl(0, 0%, 98%);
+  
+  --border: hsl(120, 20%, 25%);
+  --input: hsl(120, 20%, 25%);
+  --ring: hsl(120, 45%, 45%);
+  
+  --sidebar: hsl(25, 15%, 12%);
+  --sidebar-foreground: hsl(50, 20%, 90%);
+  --sidebar-primary: hsl(120, 45%, 45%);
   --sidebar-primary-foreground: hsl(0, 0%, 98%);
-  --sidebar-accent: hsl(220, 20%, 20%);
-  --sidebar-accent-foreground: hsl(220, 85%, 65%);
-  --sidebar-border: hsl(220, 15%, 25%);
-  --sidebar-ring: hsl(220, 85%, 65%);
+  --sidebar-accent: hsl(120, 20%, 18%);
+  --sidebar-accent-foreground: hsl(120, 45%, 45%);
+  --sidebar-border: hsl(120, 20%, 25%);
+  --sidebar-ring: hsl(120, 45%, 45%);
 }
 
 @layer base {
   * {
     @apply border-border;
-    transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
   }
-
   body {
-    @apply font-sans antialiased bg-background text-foreground;
+    @apply font-sans antialiased text-foreground;
+    background: var(--background);
   }
 }
 
-/* === Chat bubbles === */
 .chat-bubble-user {
-  background: linear-gradient(135deg, var(--primary), hsl(220, 85%, 65%));
-  color: var(--primary-foreground);
-  border-radius: var(--radius);
-  padding: 8px 12px;
+  background: linear-gradient(135deg, var(--primary), hsl(120, 45%, 30%));
 }
 
 .chat-bubble-bot {
   background: linear-gradient(135deg, var(--muted), var(--card));
   border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 8px 12px;
 }

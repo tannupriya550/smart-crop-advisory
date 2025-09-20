@@ -2,15 +2,17 @@ import express, { type Request, Response, NextFunction } from "express";
 import dotenv from "dotenv";
 import path, { dirname } from "path";
 import { fileURLToPath } from "url";
+import mongoose from "mongoose"; // ✅ Add mongoose
 
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import helmet from "helmet";
+import authRoutes from "./routes/auth";
 
 // Load env vars
 dotenv.config();
 
-const app = express();
+const app = express(); // ✅ Initialize app first
 
 // Needed for __dirname in ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -72,8 +74,15 @@ app.use((req, res, next) => {
   next();
 });
 
+// --- Auth routes (login/signup) ---
+app.use("/api/auth", authRoutes);
+
 (async () => {
   try {
+    // ✅ Connect to MongoDB first
+    await mongoose.connect(process.env.MONGO_URI || "mongodb://127.0.0.1:27017/smartcrop");
+    log("✅ MongoDB connected");
+
     // --- Register API routes ---
     const server = await registerRoutes(app);
 
@@ -105,9 +114,7 @@ app.use((req, res, next) => {
         const apiKey = process.env.WEATHER_API_KEY;
 
         if (!apiKey) {
-          return res
-            .status(500)
-            .json({ error: "Weather API key not configured" });
+          return res.status(500).json({ error: "Weather API key not configured" });
         }
 
         const response = await fetch(
@@ -116,9 +123,7 @@ app.use((req, res, next) => {
 
         if (!response.ok) {
           const error = await response.json();
-          return res
-            .status(response.status)
-            .json({ error: "Weather API failed", details: error });
+          return res.status(response.status).json({ error: "Weather API failed", details: error });
         }
 
         const data = await response.json();
@@ -128,16 +133,14 @@ app.use((req, res, next) => {
       }
     });
 
-    // --- Forecast route (Free 5-day / 3-hour API) ---
+    // --- Forecast route ---
     app.get("/api/forecast", async (req, res) => {
       try {
         const city = (req.query.city as string) || "Delhi";
         const apiKey = process.env.WEATHER_API_KEY;
 
         if (!apiKey) {
-          return res
-            .status(500)
-            .json({ error: "Weather API key not configured" });
+          return res.status(500).json({ error: "Weather API key not configured" });
         }
 
         const response = await fetch(
@@ -146,9 +149,7 @@ app.use((req, res, next) => {
 
         if (!response.ok) {
           const error = await response.json();
-          return res
-            .status(response.status)
-            .json({ error: "Forecast API failed", details: error });
+          return res.status(response.status).json({ error: "Forecast API failed", details: error });
         }
 
         const data = await response.json();
