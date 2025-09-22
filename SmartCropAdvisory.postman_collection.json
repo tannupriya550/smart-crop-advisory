@@ -1,0 +1,59 @@
+{
+  "info": {
+    "name": "Smart Crop Advisory",
+    "_postman_id": "detection-collection-1234",
+    "description": "Collection to test Smart Crop Advisory API endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Image Detection (Base64)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"imageBase64\": \"<PUT-YOUR-BASE64-HERE>\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5000/api/detect",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "detect"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Image Detection (File Upload)",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "file",
+              "type": "file",
+              "src": ""
+            }
+          ]
+        },
+        "url": {
+          "raw": "http://localhost:5000/api/detect/upload",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "detect", "upload"]
+        }
+      },
+      "response": []
+    }
+  ]
+}

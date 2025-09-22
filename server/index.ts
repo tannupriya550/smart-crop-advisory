@@ -1,32 +1,41 @@
-import express, { type Request, Response, NextFunction } from "express";
+// server/index.ts
+import express, {
+  type Express, // ✅ use Express instead of Application
+  type Request,
+  type Response,
+  type NextFunction,
+} from "express";
 import dotenv from "dotenv";
 import path, { dirname } from "path";
 import { fileURLToPath } from "url";
-import mongoose from "mongoose"; // ✅ Add mongoose
 
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import helmet from "helmet";
-import authRoutes from "./routes/auth";
+import cors from "cors";
+import axios from "axios";
 
-// Load env vars
+import authRoutes from "./routes/auth";
+import detectionRoutes from "./routes/detect";
+
 dotenv.config();
 
-const app = express(); // ✅ Initialize app first
+// ✅ app is now typed as Express
+const app: Express = express();
 
-// Needed for __dirname in ES modules
+// ✅ Fix __dirname for ES modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // --- Hide Express signature ---
 app.disable("x-powered-by");
-app.use((req, res, next) => {
+app.use((_req, res, next) => {
   res.removeHeader("X-Powered-By");
   res.removeHeader("Server");
   next();
 });
 
-// --- Security headers via Helmet ---
+// --- Security headers ---
 app.use(
   helmet({
     contentSecurityPolicy: {
@@ -41,9 +50,12 @@ app.use(
   })
 );
 
+// --- Enable CORS ---
+app.use(cors());
+
 // --- Body parsing ---
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(express.json({ limit: "50mb" }));
+app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 
 // --- Request logging middleware ---
 app.use((req, res, next) => {
@@ -74,19 +86,15 @@ app.use((req, res, next) => {
   next();
 });
 
-// --- Auth routes (login/signup) ---
+// --- Routes ---
 app.use("/api/auth", authRoutes);
+app.use("/api/detect", detectionRoutes);
 
 (async () => {
   try {
-    // ✅ Connect to MongoDB first
-    await mongoose.connect(process.env.MONGO_URI || "mongodb://127.0.0.1:27017/smartcrop");
-    log("✅ MongoDB connected");
-
-    // --- Register API routes ---
     const server = await registerRoutes(app);
 
-    // --- Error handling middleware ---
+    // --- Error handler ---
     app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
       const status = err.status || err.statusCode || 500;
       const message = err.message || "Internal Server Error";
@@ -94,12 +102,12 @@ app.use("/api/auth", authRoutes);
       log(`Error: ${message}`);
     });
 
-    // --- Health check route ---
+    // --- Health check ---
     app.get("/health", (_req, res) => {
       res.json({ status: "ok" });
     });
 
-    // --- Debug route: check if WEATHER_API_KEY is loaded ---
+    // --- Debug env ---
     app.get("/api/check-env", (_req, res) => {
       const hasKey = !!process.env.WEATHER_API_KEY;
       res.json({
@@ -107,66 +115,58 @@ app.use("/api/auth", authRoutes);
       });
     });
 
-    // --- Current Weather route ---
+    // --- Weather API ---
     app.get("/api/weather", async (req, res) => {
       try {
         const city = (req.query.city as string) || "Delhi";
         const apiKey = process.env.WEATHER_API_KEY;
 
         if (!apiKey) {
-          return res.status(500).json({ error: "Weather API key not configured" });
+          return res
+            .status(500)
+            .json({ error: "Weather API key not configured" });
         }
 
-        const response = await fetch(
+        const { data } = await axios.get(
           `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`
         );
 
-        if (!response.ok) {
-          const error = await response.json();
-          return res.status(response.status).json({ error: "Weather API failed", details: error });
-        }
-
-        const data = await response.json();
         res.json(data);
       } catch (err: any) {
         res.status(500).json({ error: err.message });
       }
     });
 
-    // --- Forecast route ---
+    // --- Forecast API ---
     app.get("/api/forecast", async (req, res) => {
       try {
         const city = (req.query.city as string) || "Delhi";
         const apiKey = process.env.WEATHER_API_KEY;
 
         if (!apiKey) {
-          return res.status(500).json({ error: "Weather API key not configured" });
+          return res
+            .status(500)
+            .json({ error: "Weather API key not configured" });
         }
 
-        const response = await fetch(
+        const { data } = await axios.get(
           `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`
         );
 
-        if (!response.ok) {
-          const error = await response.json();
-          return res.status(response.status).json({ error: "Forecast API failed", details: error });
-        }
-
-        const data = await response.json();
         res.json(data);
       } catch (err: any) {
         res.status(500).json({ error: err.message });
       }
     });
 
-    // --- Setup Vite or serve static ---
+    // --- Serve frontend ---
     if (process.env.NODE_ENV === "development") {
       await setupVite(app, server);
     } else {
       serveStatic(app);
     }
 
-    // --- Catch-all route for React Router (important for Render) ---
+    // --- Catch-all for React Router ---
     app.get("*", (_req, res) => {
       res.sendFile(path.resolve(__dirname, "../dist/public/index.html"));
     });
@@ -174,10 +174,10 @@ app.use("/api/auth", authRoutes);
     // --- Start server ---
     const port = parseInt(process.env.PORT || "5000", 10);
     server.listen(port, () => {
-      log(`Server running on port ${port}`);
+      log(`✅ Server running on port ${port}`);
     });
   } catch (err) {
-    log("Failed to start server:");
+    log("❌ Failed to start server:");
     console.error(err);
     process.exit(1);
   }

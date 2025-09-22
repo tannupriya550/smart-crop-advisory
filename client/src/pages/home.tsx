@@ -4,7 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { WeatherWidget } from '@/components/weather-widget';
 import { useLanguage } from '@/hooks/use-language';
 import { useLocalStorage } from '@/hooks/use-local-storage';
-import { Sprout, MessageCircle, Calculator, Star } from 'lucide-react';
+import { Sprout, MessageCircle, Calculator, Star, Scan } from 'lucide-react';
 import { FarmProfile } from '@shared/schema';
 
 export default function Home() {
@@ -53,6 +53,17 @@ export default function Home() {
                 >
                   <Calculator className="h-4 w-4" />
                   <span>{t('calculator')}</span>
+                </Button>
+              </Link>
+              {/* ✅ New Detect Disease button (no translation error) */}
+              <Link href="/detect">
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start space-x-3"
+                  data-testid="button-detect"
+                >
+                  <Scan className="h-4 w-4" />
+                  <span>Crop Disease Detection</span>
                 </Button>
               </Link>
             </div>
