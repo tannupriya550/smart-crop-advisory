@@ -86,7 +86,7 @@ export function WeatherWidget() {
   }, []);
 
   return (
-    <Card>
+    <Card className="weather-3d-card">
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2">
@@ -164,11 +164,11 @@ export function WeatherWidget() {
 
             {/* Forecast List (only when expanded) */}
             {showForecast && (
-              <div className="grid gap-2">
+              <div className="forecast-3d-panel grid gap-2">
                 {forecast.map((day) => (
                   <div
                     key={day.date}
-                    className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-800/50 rounded"
+                    className="forecast-3d-item flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-800/50 rounded"
                   >
                     <div>
                       <div className="font-medium">{day.date}</div>

@@ -23,39 +23,49 @@ function Login() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-green-100">
-      <div className="bg-white p-8 rounded shadow w-80">
-        <h1 className="text-2xl font-bold mb-4">Login</h1>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="border p-2 w-full mb-2"
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="border p-2 w-full mb-4"
-        />
+    <div className="auth-3d-container flex flex-col items-center justify-center min-h-screen">
+      {/* Floating Background Elements */}
+      <div className="auth-floating-element"></div>
+      <div className="auth-floating-element"></div>
+      <div className="auth-floating-element"></div>
+      <div className="auth-floating-element"></div>
+
+      <div className="auth-3d-card">
+        <h1 className="auth-3d-title">Login</h1>
+        
+        <div className="auth-3d-input">
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </div>
+        
+        <div className="auth-3d-input">
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </div>
+        
         <button
           onClick={handleLogin}
-          className="bg-green-600 text-white px-4 py-2 w-full rounded"
+          className="auth-3d-button w-full"
         >
           Login
         </button>
 
-        {/* 👇 FIX: Use wouter Link */}
-        <p className="mt-4 text-sm text-center">
-          Don’t have an account?{" "}
+        <div className="auth-3d-link">
+          Don't have an account?{" "}
           <Link href="/signup">
             <span className="text-green-700 underline cursor-pointer">
               Sign up
             </span>
           </Link>
-        </p>
+        </div>
       </div>
     </div>
   );

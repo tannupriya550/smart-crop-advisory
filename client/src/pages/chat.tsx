@@ -252,8 +252,16 @@ export default function Chat() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-      <Card className="h-[calc(100vh-12rem)] flex flex-col">
+    <div className="chat-3d-container max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      {/* Floating Question Marks */}
+      <div className="question-mark">?</div>
+      <div className="question-mark">?</div>
+      <div className="question-mark">?</div>
+      <div className="question-mark">?</div>
+      <div className="question-mark">?</div>
+
+
+      <Card className="chat-3d-card h-[calc(100vh-12rem)] flex flex-col">
         <CardHeader className="flex-shrink-0">
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2" data-testid="text-chat-title">
@@ -272,14 +280,14 @@ export default function Chat() {
 
         {/* Chat Messages */}
         <CardContent className="flex-1 flex flex-col min-h-0 p-0">
-          <ScrollArea className="flex-1 p-6">
+          <ScrollArea className="chat-3d-scroll flex-1 p-6">
             <div className="space-y-4">
               {/* Welcome Message */}
-              <div className="flex items-start space-x-3" data-testid="message-welcome">
-                <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
+              <div className="chat-3d-message flex items-start space-x-3" data-testid="message-welcome">
+                <div className="chat-3d-avatar w-8 h-8 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
                   <Bot className="text-primary-foreground text-sm h-4 w-4" />
                 </div>
-                <div className="chat-bubble-bot max-w-xs lg:max-w-md px-4 py-3 rounded-lg">
+                <div className="chat-3d-bubble-bot max-w-xs lg:max-w-md px-4 py-3 rounded-lg">
                   <p className="text-sm">
                     {language === 'hi' 
                       ? 'नमस्कार! मैं आपकी खेती में मदद के लिए हूँ। आप क्या जानना चाहते हैं?'
@@ -298,24 +306,24 @@ export default function Chat() {
               {chatHistory?.map((chat, index) => (
                 <div key={chat.id} className="space-y-3">
                   {/* User Message */}
-                  <div className="flex items-start space-x-3 justify-end" data-testid={`message-user-${index}`}>
-                    <div className="chat-bubble-user max-w-xs lg:max-w-md px-4 py-3 rounded-lg">
+                  <div className="chat-3d-message flex items-start space-x-3 justify-end" data-testid={`message-user-${index}`}>
+                    <div className="chat-3d-bubble-user max-w-xs lg:max-w-md px-4 py-3 rounded-lg">
                       <p className="text-sm text-primary-foreground">{chat.message}</p>
                       <span className="text-xs text-primary-foreground/70 mt-1 block">
                         {formatTime(chat.createdAt)}
                       </span>
                     </div>
-                    <div className="w-8 h-8 bg-accent rounded-full flex items-center justify-center flex-shrink-0">
+                    <div className="chat-3d-avatar w-8 h-8 bg-accent rounded-full flex items-center justify-center flex-shrink-0">
                       <User className="text-accent-foreground text-sm h-4 w-4" />
                     </div>
                   </div>
 
                   {/* AI Response */}
-                  <div className="flex items-start space-x-3" data-testid={`message-bot-${index}`}>
-                    <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
+                  <div className="chat-3d-message flex items-start space-x-3" data-testid={`message-bot-${index}`}>
+                    <div className="chat-3d-avatar w-8 h-8 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
                       <Bot className="text-primary-foreground text-sm h-4 w-4" />
                     </div>
-                    <div className="chat-bubble-bot max-w-xs lg:max-w-md px-4 py-3 rounded-lg">
+                    <div className="chat-3d-bubble-bot max-w-xs lg:max-w-md px-4 py-3 rounded-lg">
                       <div className="text-sm whitespace-pre-wrap">{chat.response}</div>
                       <div className="flex items-center justify-between mt-2">
                         <span className="text-xs text-muted-foreground">
@@ -346,26 +354,26 @@ export default function Chat() {
               {isLoading && (
                 <div className="space-y-3">
                   {/* User's pending message */}
-                  <div className="flex items-start space-x-3 justify-end">
-                    <div className="chat-bubble-user max-w-xs lg:max-w-md px-4 py-3 rounded-lg">
+                  <div className="chat-3d-message flex items-start space-x-3 justify-end">
+                    <div className="chat-3d-bubble-user max-w-xs lg:max-w-md px-4 py-3 rounded-lg">
                       <p className="text-sm text-primary-foreground">{message}</p>
                       <span className="text-xs text-primary-foreground/70 mt-1 block">
                         Sending...
                       </span>
                     </div>
-                    <div className="w-8 h-8 bg-accent rounded-full flex items-center justify-center flex-shrink-0">
+                    <div className="chat-3d-avatar w-8 h-8 bg-accent rounded-full flex items-center justify-center flex-shrink-0">
                       <User className="text-accent-foreground text-sm h-4 w-4" />
                     </div>
                   </div>
 
                   {/* AI thinking */}
-                  <div className="flex items-start space-x-3">
-                    <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
+                  <div className="chat-3d-message flex items-start space-x-3">
+                    <div className="chat-3d-avatar w-8 h-8 bg-primary rounded-full flex items-center justify-center flex-shrink-0">
                       <Bot className="text-primary-foreground text-sm h-4 w-4" />
                     </div>
-                    <div className="chat-bubble-bot max-w-xs lg:max-w-md px-4 py-3 rounded-lg">
+                    <div className="chat-3d-bubble-bot max-w-xs lg:max-w-md px-4 py-3 rounded-lg">
                       <div className="flex items-center space-x-2">
-                        <Loader2 className="h-4 w-4 animate-spin" />
+                        <Loader2 className="chat-3d-loading h-4 w-4" />
                         <span className="text-sm">Thinking...</span>
                       </div>
                     </div>
@@ -381,7 +389,7 @@ export default function Chat() {
           <div className="flex-shrink-0 p-6 border-t border-border">
             <form onSubmit={handleSubmit} className="space-y-3">
               <div className="flex space-x-3">
-                <div className="flex-1 relative">
+                <div className="chat-3d-input flex-1 relative">
                   <Input
                     ref={inputRef}
                     type="text"
@@ -410,11 +418,12 @@ export default function Chat() {
                 </div>
                 <Button 
                   type="submit"
+                  className="chat-3d-button"
                   disabled={!message.trim() || isLoading}
                   data-testid="button-send-message"
                 >
                   {isLoading ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <Loader2 className="chat-3d-loading h-4 w-4" />
                   ) : (
                     <Send className="h-4 w-4" />
                   )}
@@ -427,7 +436,7 @@ export default function Chat() {
                   type="button"
                   variant="ghost"
                   size="sm"
-                  className={`${recognitionSupported ? 'text-muted-foreground hover:text-foreground' : 'text-muted-foreground/50 cursor-not-allowed'}`}
+                  className={`chat-3d-button ${recognitionSupported ? 'text-muted-foreground hover:text-foreground' : 'text-muted-foreground/50 cursor-not-allowed'}`}
                   onClick={handleVoiceInput}
                   disabled={!recognitionSupported || isLoading}
                   data-testid="button-voice-input"

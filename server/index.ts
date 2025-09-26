@@ -1,6 +1,6 @@
 // server/index.ts
 import express, {
-  type Express, // ✅ use Express instead of Application
+  type Express,
   type Request,
   type Response,
   type NextFunction,
@@ -8,7 +8,7 @@ import express, {
 import dotenv from "dotenv";
 import path, { dirname } from "path";
 import { fileURLToPath } from "url";
-
+import mongoose from "mongoose"; // ✅ MongoDB
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
 import helmet from "helmet";
@@ -17,10 +17,10 @@ import axios from "axios";
 
 import authRoutes from "./routes/auth";
 import detectionRoutes from "./routes/detect";
+import landRoutes from "./routes/land"; // ✅ land routes
 
 dotenv.config();
 
-// ✅ app is now typed as Express
 const app: Express = express();
 
 // ✅ Fix __dirname for ES modules
@@ -41,8 +41,22 @@ app.use(
     contentSecurityPolicy: {
       useDefaults: true,
       directives: {
-        "script-src": ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
-        "style-src": ["'self'", "'unsafe-inline'"],
+        "script-src": [
+          "'self'",
+          "'unsafe-inline'",
+          "'unsafe-eval'",
+          // ⛔ removed Replit banner
+        ],
+        "style-src": [
+          "'self'",
+          "'unsafe-inline'",
+          "https://fonts.googleapis.com", // ✅ allow Google Fonts
+        ],
+        "font-src": [
+          "'self'",
+          "https://fonts.gstatic.com", // ✅ allow Google Fonts font files
+          "data:",
+        ],
         "img-src": ["'self'", "data:", "https:"],
       },
     },
@@ -54,8 +68,8 @@ app.use(
 app.use(cors());
 
 // --- Body parsing ---
-app.use(express.json({ limit: "50mb" }));
-app.use(express.urlencoded({ extended: true, limit: "50mb" }));
+app.use(express.json({ limit: "100mb" }));
+app.use(express.urlencoded({ extended: true, limit: "100mb" }));
 
 // --- Request logging middleware ---
 app.use((req, res, next) => {
@@ -89,9 +103,15 @@ app.use((req, res, next) => {
 // --- Routes ---
 app.use("/api/auth", authRoutes);
 app.use("/api/detect", detectionRoutes);
+app.use("/api/land", landRoutes); // ✅ land API
 
 (async () => {
   try {
+    // ✅ Connect MongoDB
+    const mongoUri = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/smartcrop";
+    await mongoose.connect(mongoUri);
+    log("✅ MongoDB connected");
+
     const server = await registerRoutes(app);
 
     // --- Error handler ---
@@ -115,16 +135,14 @@ app.use("/api/detect", detectionRoutes);
       });
     });
 
-    // --- Weather API ---
+    // --- Current weather ---
     app.get("/api/weather", async (req, res) => {
       try {
         const city = (req.query.city as string) || "Delhi";
         const apiKey = process.env.WEATHER_API_KEY;
 
         if (!apiKey) {
-          return res
-            .status(500)
-            .json({ error: "Weather API key not configured" });
+          return res.status(500).json({ error: "Weather API key not configured" });
         }
 
         const { data } = await axios.get(
@@ -137,16 +155,14 @@ app.use("/api/detect", detectionRoutes);
       }
     });
 
-    // --- Forecast API ---
+    // --- Forecast ---
     app.get("/api/forecast", async (req, res) => {
       try {
         const city = (req.query.city as string) || "Delhi";
         const apiKey = process.env.WEATHER_API_KEY;
 
         if (!apiKey) {
-          return res
-            .status(500)
-            .json({ error: "Weather API key not configured" });
+          return res.status(500).json({ error: "Weather API key not configured" });
         }
 
         const { data } = await axios.get(
@@ -154,6 +170,32 @@ app.use("/api/detect", detectionRoutes);
         );
 
         res.json(data);
+      } catch (err: any) {
+        res.status(500).json({ error: err.message });
+      }
+    });
+
+    // --- 🌧 Rain alert ---
+    app.get("/api/weather/rain-alert", async (req, res) => {
+      try {
+        const city = (req.query.city as string) || "Delhi";
+        const apiKey = process.env.WEATHER_API_KEY;
+
+        if (!apiKey) {
+          return res.status(500).json({ error: "Weather API key not configured" });
+        }
+
+        const { data } = await axios.get(
+          `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}&units=metric`
+        );
+
+        // Check next 12 hours (4 x 3-hour slots)
+        const upcoming = data.list.slice(0, 4);
+        const rainExpected = upcoming.some((f: any) =>
+          f.weather[0].main.toLowerCase().includes("rain")
+        );
+
+        res.json({ rainExpected, forecast: upcoming });
       } catch (err: any) {
         res.status(500).json({ error: err.message });
       }

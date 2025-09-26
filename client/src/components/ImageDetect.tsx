@@ -35,13 +35,34 @@ export default function ImageDetect() {
     <div className="p-4 space-y-4">
       <h2 className="text-xl font-bold">🌱 Crop Disease Detection</h2>
 
-      <input type="file" accept="image/*" onChange={handleFileChange} />
-      {preview && <img src={preview} alt="preview" className="w-64 mt-2 rounded shadow" />}
+      {/* ✅ Accessible label + id/name */}
+      <label
+        htmlFor="upload-image"
+        className="block text-sm font-medium text-gray-700"
+      >
+        Upload an image
+      </label>
+      <input
+        id="upload-image"
+        name="upload-image"
+        type="file"
+        accept="image/*"
+        onChange={handleFileChange}
+        className="mt-1"
+      />
+
+      {preview && (
+        <img
+          src={preview}
+          alt="preview"
+          className="w-64 mt-2 rounded shadow border"
+        />
+      )}
 
       <button
         onClick={handleUpload}
         disabled={loading || !file}
-        className="px-4 py-2 bg-green-600 text-white rounded disabled:opacity-50"
+        className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 disabled:opacity-50"
       >
         {loading ? "Detecting..." : "Run Detection"}
       </button>

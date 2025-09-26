@@ -24,8 +24,10 @@ export const translations = {
     currentSeason: "Current Season Recommendations",
     totalInvestment: "Total Investment",
     perAcre: "per acre",
-    goodWeather: "Good weather for spraying pesticides. Avoid watering in afternoon heat.",
-    tipMessage: "Take clear photos in good lighting. Include both affected and healthy parts for better identification.",
+    goodWeather:
+      "Good weather for spraying pesticides. Avoid watering in afternoon heat.",
+    tipMessage:
+      "Take clear photos in good lighting. Include both affected and healthy parts for better identification.",
     voiceInput: "Voice Input (Hindi/English)",
     placeholder: "Type your question here...",
     farmSize: "Farm Size",
@@ -35,7 +37,7 @@ export const translations = {
     acres: "Acres",
     humidity: "Humidity",
     rainfall: "Rainfall",
-    wind: "Wind"
+    wind: "Wind",
   },
   hi: {
     appName: "फसल सलाहकार",
@@ -62,8 +64,10 @@ export const translations = {
     currentSeason: "वर्तमान सीजन की सिफारिशें",
     totalInvestment: "कुल निवेश",
     perAcre: "प्रति एकड़",
-    goodWeather: "कीटनाशक छिड़काव के लिए अच्छा मौसम। दोपहर की गर्मी में पानी देने से बचें।",
-    tipMessage: "अच्छी रोशनी में स्पष्ट तस्वीरें लें। बेहतर पहचान के लिए प्रभावित और स्वस्थ दोनों हिस्सों को शामिल करें।",
+    goodWeather:
+      "कीटनाशक छिड़काव के लिए अच्छा मौसम। दोपहर की गर्मी में पानी देने से बचें।",
+    tipMessage:
+      "अच्छी रोशनी में स्पष्ट तस्वीरें लें। बेहतर पहचान के लिए प्रभावित और स्वस्थ दोनों हिस्सों को शामिल करें।",
     voiceInput: "आवाज इनपुट (हिंदी/अंग्रेजी)",
     placeholder: "अपना सवाल यहाँ लिखें...",
     farmSize: "खेत का आकार",
@@ -73,8 +77,48 @@ export const translations = {
     acres: "एकड़",
     humidity: "नमी",
     rainfall: "बारिश",
-    wind: "हवा"
-  }
+    wind: "हवा",
+  },
+  pa: {
+    appName: "ਫਸਲ ਸਲਾਹਕਾਰ",
+    weather: "ਮੌਸਮ",
+    farmProfile: "ਖੇਤ ਦੀ ਜਾਣਕਾਰੀ",
+    recommendations: "ਫਸਲ ਸਿਫ਼ਾਰਸ਼ਾਂ",
+    pestGallery: "ਕੀਟ ਅਤੇ ਰੋਗ ਗੈਲਰੀ",
+    calculator: "ਖਾਦ ਕੈਲਕੂਲੇਟਰ",
+    chat: "AI ਸਹਾਇਕ",
+    home: "ਮੁੱਖ ਪੰਨਾ",
+    tools: "ਸੰਦ",
+    crops: "ਫਸਲਾਂ",
+    assistant: "ਸਹਾਇਕ",
+    edit: "ਸੋਧੋ",
+    viewTreatment: "ਇਲਾਜ ਵੇਖੋ",
+    uploadPhoto: "ਫੋਟੋ ਅੱਪਲੋਡ ਕਰੋ",
+    calculate: "ਖਾਦ ਦੀ ਲੋੜ ਗਣਨਾ ਕਰੋ",
+    viewDetailedAnalysis: "ਵਿਸਥਾਰ ਨਾਲ ਵਿਸ਼ਲੇਸ਼ਣ ਵੇਖੋ",
+    quickTip: "ਝਟਪਟ ਸੁਝਾਅ",
+    farmingAlert: "ਖੇਤੀ ਚੇਤਾਵਨੀ",
+    online: "ਆਨਲਾਈਨ",
+    quickActions: "ਤੁਰੰਤ ਕਾਰਵਾਈਆਂ",
+    askAI: "AI ਸਹਾਇਕ ਨਾਲ ਪੁੱਛੋ",
+    currentSeason: "ਮੌਜੂਦਾ ਸੀਜ਼ਨ ਸਿਫ਼ਾਰਸ਼ਾਂ",
+    totalInvestment: "ਕੁੱਲ ਨਿਵੇਸ਼",
+    perAcre: "ਪ੍ਰਤੀ ਏਕੜ",
+    goodWeather:
+      "ਕੀਟਨਾਸ਼ਕ ਛਿੜਕਾਅ ਲਈ ਚੰਗਾ ਮੌਸਮ। ਦੁਪਹਿਰ ਦੀ ਗਰਮੀ ਵਿੱਚ ਪਾਣੀ ਦੇਣ ਤੋਂ ਬਚੋ।",
+    tipMessage:
+      "ਚੰਗੀ ਰੌਸ਼ਨੀ ਵਿੱਚ ਸਾਫ਼ ਫੋਟੋ ਖਿੱਚੋ। ਵਧੀਆ ਪਛਾਣ ਲਈ ਪ੍ਰਭਾਵਿਤ ਅਤੇ ਸਿਹਤਮੰਦ ਹਿੱਸੇ ਸ਼ਾਮਲ ਕਰੋ।",
+    voiceInput: "ਆਵਾਜ਼ ਇਨਪੁੱਟ (ਹਿੰਦੀ/ਅੰਗਰੇਜ਼ੀ)",
+    placeholder: "ਇੱਥੇ ਆਪਣਾ ਪ੍ਰਸ਼ਨ ਲਿਖੋ...",
+    farmSize: "ਖੇਤ ਦਾ ਆਕਾਰ",
+    soilType: "ਮਿੱਟੀ ਦੀ ਕਿਸਮ",
+    previousCrop: "ਪਿਛਲੀ ਫਸਲ",
+    irrigation: "ਸਿੰਚਾਈ ਤਰੀਕਾ",
+    acres: "ਏਕੜ",
+    humidity: "ਨਮੀ",
+    rainfall: "ਬਰਸਾਤ",
+    wind: "ਹਵਾ",
+  },
 };
 
 export type Language = keyof typeof translations;

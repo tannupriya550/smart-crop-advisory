@@ -36,14 +36,49 @@ export default function Signup() {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 space-y-4 p-6 bg-white dark:bg-gray-900 rounded-lg shadow">
-      <h1 className="text-xl font-bold">Signup</h1>
-      <Input placeholder="Full Name" value={name} onChange={(e) => setName(e.target.value)} />
-      <Input placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
-      <Input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} />
-      <Button onClick={handleSignup} disabled={loading}>
-        {loading ? "Signing up..." : "Signup"}
-      </Button>
+    <div className="auth-3d-container flex flex-col items-center justify-center min-h-screen">
+      {/* Floating Background Elements */}
+      <div className="auth-floating-element"></div>
+      <div className="auth-floating-element"></div>
+      <div className="auth-floating-element"></div>
+      <div className="auth-floating-element"></div>
+
+      <div className="auth-3d-card">
+        <h1 className="auth-3d-title">Signup</h1>
+        
+        <div className="auth-3d-input">
+          <Input 
+            placeholder="Full Name" 
+            value={name} 
+            onChange={(e) => setName(e.target.value)} 
+          />
+        </div>
+        
+        <div className="auth-3d-input">
+          <Input 
+            placeholder="Email" 
+            value={email} 
+            onChange={(e) => setEmail(e.target.value)} 
+          />
+        </div>
+        
+        <div className="auth-3d-input">
+          <Input 
+            type="password" 
+            placeholder="Password" 
+            value={password} 
+            onChange={(e) => setPassword(e.target.value)} 
+          />
+        </div>
+        
+        <Button 
+          onClick={handleSignup} 
+          disabled={loading}
+          className="auth-3d-button w-full"
+        >
+          {loading ? "Signing up..." : "Signup"}
+        </Button>
+      </div>
     </div>
   );
 }
