@@ -23,7 +23,29 @@ export default function LandMap() {
   const [lands, setLands] = useState<Land[]>([]);
 
   useEffect(() => {
-    axios.get("/api/land").then((res) => setLands(res.data));
+    axios.get("/api/land").then((res) => {
+      // ✅ Merge API results with hardcoded Delhi + Mumbai
+      const defaultLands: Land[] = [
+        {
+          _id: "delhi",
+          lat: 28.7041,
+          lng: 77.1025,
+          size: "50 acres",
+          price: "₹5,00,000",
+          status: "Available",
+        },
+        {
+          _id: "mumbai",
+          lat: 19.076,
+          lng: 72.8777,
+          size: "30 acres",
+          price: "₹7,50,000",
+          status: "Available",
+        },
+      ];
+
+      setLands([...defaultLands, ...res.data]);
+    });
   }, []);
 
   return (
@@ -36,9 +58,12 @@ export default function LandMap() {
         {lands.map((land) => (
           <Marker key={land._id} position={[land.lat, land.lng]} icon={markerIcon}>
             <Popup>
-              <b>Available Land</b><br />
-              Size: {land.size}<br />
-              Price: {land.price}<br />
+              <b>Available Land</b>
+              <br />
+              Size: {land.size}
+              <br />
+              Price: {land.price}
+              <br />
               Status: {land.status}
             </Popup>
           </Marker>
